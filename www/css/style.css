@@ -1,24 +1,179 @@
-
-
-
-#dropbox {
-  border: 1px dashed #6449D6;
-  border-radius: 20px;
-  /*top: 20px;*/
-  width: 200px;
-  margin: 30px auto 30px auto;
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*margin-top: 10px;*/
-  text-align: center;
-  cursor: pointer;
-  /*background: #0F73BD;*/
-  /*opacity: 0.8;*/
+:root {
+  --purple: #6449D6;
+  --purple-light: #ede9fb;
+  --purple-mid: #b8abef;
 }
 
+body {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+/* Drop zone */
+#dropbox {
+  border: 1px solid var(--purple-mid);
+  border-radius: 8px;
+  width: 220px;
+  margin: 2rem auto;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  user-select: none;
+}
+
+#dropbox:hover,
 #dropbox.highlight {
-  background: #0F73BD;
-  opacity: 0.5;
-  /*background: green;*/
-  /*border-color: red;*/
+  border-color: var(--purple);
+  background: var(--purple-light);
+}
+
+#dropbox .logo {
+  width: 80px;
+  display: block;
+  margin: 0 auto 0.75rem;
+}
+
+#dropbox p {
+  margin: 0;
+  color: var(--purple);
+  font-size: 0.9rem;
+}
+
+/* About box */
+.about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1.5rem;
+  border: 1px solid var(--purple-mid);
+  border-radius: 8px;
+  background: var(--purple-light);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.about p {
+  margin: 0.2rem 0;
+}
+
+/* File info box */
+.info-box {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.3rem 1.25rem;
+  align-items: baseline;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 0;
+  font-size: 0.85rem;
+  list-style: none;
+}
+
+/* Result banner */
+.result-banner {
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.result-banner.valid {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.result-banner.warnings {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.result-banner.invalid {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* 2-panel layout */
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.panel {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.panel h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #777;
+  font-weight: 600;
+}
+
+/* Check rows */
+.check-row {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.4rem;
+  border-left: 3px solid #ddd;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.check-row.ok {
+  border-left-color: #28a745;
+  background: #f0fff4;
+}
+
+.check-row.error {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+}
+
+.check-row.warning {
+  border-left-color: #ffc107;
+  background: #fffbf0;
+}
+
+.check-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.check-detail {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 0.15rem;
+  word-break: break-word;
+}
+
+/* CityJSONSeq table */
+#tab_cjf_summary {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Utility */
+.hidden {
+  display: none;
 }

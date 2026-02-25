@@ -78,8 +78,8 @@ impl Validator {
         } else {
             let s = re
                 .unwrap()
-                .values()
-                .cloned()
+                .iter()
+                .map(|(k, v)| format!("{}|{}", k, v))
                 .collect::<Vec<String>>()
                 .join("\n");
             return JsValue::from_str(&s.to_string());
