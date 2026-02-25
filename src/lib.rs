@@ -76,7 +76,12 @@ impl Validator {
         if re.is_none() {
             return JsValue::NULL;
         } else {
-            let s = re.unwrap().join("\n");
+            let s = re
+                .unwrap()
+                .values()
+                .cloned()
+                .collect::<Vec<String>>()
+                .join("\n");
             return JsValue::from_str(&s.to_string());
         }
     }
