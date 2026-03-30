@@ -106,10 +106,14 @@ async function handleFiles(files) {
       row.appendChild(c2);
       table1.appendChild(row);
 
-      download_all_extensions(validator, () => {
+      document.getElementById('cjf-spinner').classList.remove('hidden');
+
+      download_all_extensions(validator, async () => {
         validator.validate();
         var status = validator.get_status();
         var errs = validator.get_errors_string();
+        // worst status seen across all lines: -1 = errors, 0 = warnings, 1 = valid
+        let worstStatus = status;
         if (status == 1) {
           c2.innerText = "✅";
         } else if (status == 0) {
@@ -118,32 +122,68 @@ async function handleFiles(files) {
           c2.innerText = "❌ (first line must be a valid CityJSON object) | " + errs;
         }
 
-        lines.forEach(function(item, index) {
-          if (index >= 1) {
-            if (item == "") return;
-            let row = document.createElement("tr");
-            let c1 = document.createElement("td");
-            let c2 = document.createElement("td");
-            c1.innerText = index + 1;
-            row.appendChild(c1);
-            row.appendChild(c2);
-            table1.appendChild(row);
-            try {
-              validator.from_str_cjfeature(item);
-              validator.validate();
-              var status = validator.get_status();
-              if (status == 1) {
-                c2.innerText = "✅";
-              } else if (status == 0) {
-                c2.innerText = "🟡 " + validator.get_errors_string();
-              } else {
-                c2.innerText = "❌ " + validator.get_errors_string();
-              }
-            } catch(e) {
-              c2.innerText = "❌ " + e;
+        const CHUNK_SIZE = 50;
+        const totalFeatures = lines.filter((l, i) => i >= 1 && l !== "").length;
+        const totalLines = totalFeatures + 1;
+        c1.innerHTML = `1<span class="line-total">/${totalLines}</span>`;
+        let processed = 0;
+
+        let fragment = document.createDocumentFragment();
+
+        for (let index = 1; index < lines.length; index++) {
+          const item = lines[index];
+          if (item === "") continue;
+
+          let row = document.createElement("tr");
+          let c1 = document.createElement("td");
+          let c2 = document.createElement("td");
+          c1.innerHTML = `${index + 1}<span class="line-total">/${totalLines}</span>`;
+          row.appendChild(c1);
+          row.appendChild(c2);
+
+          try {
+            validator.from_str_cjfeature(item);
+            validator.validate();
+            var st = validator.get_status();
+            if (st < worstStatus) worstStatus = st;
+            if (st == 1) {
+              c2.innerText = "✅";
+            } else if (st == 0) {
+              c2.innerText = "🟡 " + validator.get_errors_string();
+            } else {
+              c2.innerText = "❌ " + validator.get_errors_string();
             }
+          } catch(e) {
+            worstStatus = -1;
+            c2.innerText = "❌ " + e;
           }
-        });
+
+          fragment.appendChild(row);
+          processed++;
+
+          if (processed % CHUNK_SIZE === 0) {
+            table1.appendChild(fragment);
+            fragment = document.createDocumentFragment();
+            await new Promise(resolve => setTimeout(resolve, 0));
+          }
+        }
+
+        // flush remaining rows
+        table1.appendChild(fragment);
+
+        // hide spinner and show summary banner
+        document.getElementById('cjf-spinner').classList.add('hidden');
+        const banner = document.getElementById("result-banner");
+        if (worstStatus == 1) {
+          banner.innerHTML = "✅ All features are valid!";
+          banner.className = "result-banner valid";
+        } else if (worstStatus == 0) {
+          banner.innerHTML = "🟡 All features are valid but some have warnings";
+          banner.className = "result-banner warnings";
+        } else {
+          banner.innerHTML = "❌ Some features are invalid";
+          banner.className = "result-banner invalid";
+        }
       });
     };
 
@@ -175,6 +215,7 @@ function reset_results() {
 
   document.getElementById("results-panels").classList.add('hidden');
   document.getElementById("tab_cjf_summary").classList.add('hidden');
+  document.getElementById("cjf-spinner").classList.add('hidden');
   document.getElementById("theextensions").innerHTML = '';
 
   const banner = document.getElementById("result-banner");
