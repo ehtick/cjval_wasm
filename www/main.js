@@ -106,7 +106,9 @@ async function handleFiles(files) {
       row.appendChild(c2);
       table1.appendChild(row);
 
-      document.getElementById('cjf-spinner').classList.remove('hidden');
+      const banner = document.getElementById("result-banner");
+      banner.innerHTML = '<span class="spinning-cog">⚙️</span> Validating…';
+      banner.className = 'result-banner validating';
 
       download_all_extensions(validator, async () => {
         validator.validate();
@@ -171,9 +173,6 @@ async function handleFiles(files) {
         // flush remaining rows
         table1.appendChild(fragment);
 
-        // hide spinner and show summary banner
-        document.getElementById('cjf-spinner').classList.add('hidden');
-        const banner = document.getElementById("result-banner");
         if (worstStatus == 1) {
           banner.innerHTML = "✅ All features are valid!";
           banner.className = "result-banner valid";
@@ -215,7 +214,6 @@ function reset_results() {
 
   document.getElementById("results-panels").classList.add('hidden');
   document.getElementById("tab_cjf_summary").classList.add('hidden');
-  document.getElementById("cjf-spinner").classList.add('hidden');
   document.getElementById("theextensions").innerHTML = '';
 
   const banner = document.getElementById("result-banner");
